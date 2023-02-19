@@ -22,6 +22,7 @@ julia> p = [[0.1, 0.2, 0.3, 0.4] [0.5, 0.6, 0.1, 0.3] [0.4, 0.2, 0.6, 0.3]]
 In this case the note that the rows add to 1, but it is not necessary to have the matrix normalized. We can then sample in a differentiable way like this:
 
 ```julia
+julia> using GumbelSoftmax
 julia> result = sample_gumbel_softmax(p, 0.1; hard=true)
 4×3 Matrix{Float64}:
  1.0  0.0  0.0
