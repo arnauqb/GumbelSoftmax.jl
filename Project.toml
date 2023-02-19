@@ -1,6 +1,6 @@
 name = "GumbelSoftmax"
 uuid = "f60ed98c-c695-46ff-9817-9af1b038875e"
-authors = ["Arnau Quera-Bofarull"]
+authors = ["Arnau Quera-Bofarull <arnauq@protonmail.com>"]
 version = "0.1.0"
 
 [deps]
@@ -11,6 +11,10 @@ Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [compat]
 julia = "1.8"
+CUDA="4.0"
+ChainRulesCore="1.15"
+Flux="0.13"
+Zygote="0.6"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

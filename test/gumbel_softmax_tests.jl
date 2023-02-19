@@ -1,11 +1,11 @@
 using Test
 using GumbelSoftmax, Zygote
 
-N = 1000
 p = [[0.1, 0.2, 0.3, 0.4] [0.5, 0.6, 0.1, 0.3] [0.4, 0.2, 0.6, 0.3]]
 
 
-@testset "Test forward behaviour" begin
+@testset "Test forward sampling" begin
+    N = 10000
     function sample_cat(p, N, tau, hard)
         res = zeros(size(p))
         for i = 1:N
@@ -26,6 +26,7 @@ end
 
 
 @testset "Test gradient" begin
+    N = 1000
 
     function get_total(p, N, tau)
         res = sum([sum(sample_gumbel_softmax(p, tau)[:,2]) for i in 1:N])
