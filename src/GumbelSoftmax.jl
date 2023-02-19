@@ -1,6 +1,7 @@
 module GumbelSoftmax
 
 using CUDA
+using ChainRulesCore
 using Flux
 using Zygote
 

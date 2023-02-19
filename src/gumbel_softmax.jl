@@ -19,7 +19,7 @@ function sample_gumbel_softmax(probs, tau; hard=true)
     y_soft = softmax(y / tau, dims=2)
     if hard
         y_hard = (y_soft .== maximum(y_soft, dims=2))
-        ret = y_hard - Zygote.dropgrad(y_soft) + y_soft
+        ret = y_hard - ChainRulesCore.ignore_derivatives(y_soft) + y_soft
     else
         ret = y_soft
     end
