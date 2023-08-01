@@ -1,7 +1,7 @@
 name = "GumbelSoftmax"
 uuid = "f60ed98c-c695-46ff-9817-9af1b038875e"
 authors = ["Arnau Quera-Bofarull <arnauq@protonmail.com>"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
