@@ -7,14 +7,15 @@ version = "0.1.0"
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
 ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
 Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 
 [compat]
+CUDA = "3.0, 4.0"
+ChainRulesCore = "1.15"
+Flux = "0.13"
+Zygote = "0.6"
 julia = "1.8"
-CUDA="3.0, 4.0"
-ChainRulesCore="1.15"
-Flux="0.13"
-Zygote="0.6"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
