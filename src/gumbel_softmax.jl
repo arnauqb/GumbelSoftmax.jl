@@ -13,13 +13,19 @@ function sample_gumbel(probs, size; epsilon=1e-10)
     return ret
 end
 
+stop_gradient(x) = ChainRulesCore.ignore_derivatives(x)
+function stop_gradient(n::ForwardDiff.Dual{T}) where {T}
+    ForwardDiff.Dual{T}(ForwardDiff.value(n), 0.0)
+end
+stop_gradient(n::Array{<:ForwardDiff.Dual}) = stop_gradient.(n)
+
 function sample_gumbel_softmax(probs, tau; hard=true, epsilon=1e-10)
     logits = log.(probs .+ epsilon)
     y = logits + sample_gumbel(probs, size(logits), epsilon=epsilon)
     y_soft = softmax(y / tau, dims=2)
     if hard
         y_hard = (y_soft .== maximum(y_soft, dims=2))
-        ret = y_hard - ChainRulesCore.ignore_derivatives(y_soft) + y_soft
+        ret = y_hard - stop_gradient(y_soft) + y_soft
     else
         ret = y_soft
     end

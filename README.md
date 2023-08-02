@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/arnauqb/GumbelSoftmax.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/arnauqb/GumbelSoftmax.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/arnauqb/GumbelSoftmax.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/arnauqb/GumbelSoftmax.jl)
 
-This package implements the [Gumbel-Softmax reparametrization trick](https://arxiv.org/abs/1611.01144) in Julia using [Zygote](https://github.com/FluxML/Zygote.jl).
+This package implements the [Gumbel-Softmax reparametrization trick](https://arxiv.org/abs/1611.01144) in Julia. It supports reverse-mode AD using [Zygote](https://github.com/FluxML/Zygote.jl) and forward-mode AD using [ForwardDiff](https://github.com/JuliaDiff/ForwardDiff.jl).
 
 # Usage
 
