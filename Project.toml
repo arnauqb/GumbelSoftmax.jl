@@ -15,6 +15,7 @@ Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
 CUDA = "3.0, 4.0"
 ChainRulesCore = "1.15"
 Flux = "0.13"
+ForwardDiff = "0.10"
 Zygote = "0.6"
 julia = "1.8"
 
