@@ -31,6 +31,7 @@ julia> result = sample_gumbel_softmax(p, 0.1; hard=true)
  where 0.1 corresponds to the temperature parameter, and `hard=true` specified whether we want hard samples (ie 0 or 1). We can then calculate the gradient using the standard Zygote interface. Note that we can only calculate gradients, so we will suppose we are interested in the sum of results in the second column:
 
 ```julia
+using Zygote
 function to_derive(p)
     result = sample_gumbel_softmax(p, 0.1; hard=true)
     return sum(result[:,2])
