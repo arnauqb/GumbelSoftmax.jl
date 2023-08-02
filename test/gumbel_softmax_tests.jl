@@ -1,5 +1,7 @@
+using ForwardDiff
+using GumbelSoftmax
 using Test
-using GumbelSoftmax, Zygote
+using Zygote
 
 p = [[0.1, 0.2, 0.3, 0.4] [0.5, 0.6, 0.1, 0.3] [0.4, 0.2, 0.6, 0.3]]
 
@@ -25,7 +27,7 @@ p = [[0.1, 0.2, 0.3, 0.4] [0.5, 0.6, 0.1, 0.3] [0.4, 0.2, 0.6, 0.3]]
 end
 
 
-@testset "Test gradient" begin
+@testset "Test Zygote gradient" begin
     N = 1000
 
     function get_total(p, N, tau)
@@ -62,3 +64,15 @@ end
     @test gradient_estimation ≈ result_pytorch rtol=0.1
 end
 
+@testset "Test ForwardDiff" begin
+    function f(p)
+        probs = p * ones(10)
+        probs = [probs 1 .- probs]
+        return sum(sample_gumbel_softmax(probs, 0.1, hard=true)[:,1])
+    end
+    p = 0.3
+    n_samples = 1000
+    fdiffs = sum([ForwardDiff.derivative(f, p) for i in 1:n_samples]) / n_samples
+    zdiffs = sum([Zygote.gradient(f, p)[1] for i in 1:n_samples]) / n_samples
+    @test fdiffs ≈ zdiffs rtol=0.1
+end
