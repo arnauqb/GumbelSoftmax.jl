@@ -19,12 +19,14 @@ function stop_gradient(n::ForwardDiff.Dual{T}) where {T}
 end
 stop_gradient(n::Array{<:ForwardDiff.Dual}) = stop_gradient.(n)
 
-function sample_gumbel_softmax(probs, tau; hard=true, epsilon=1e-10)
-    logits = log.(probs .+ epsilon)
-    y = logits + sample_gumbel(probs, size(logits), epsilon=epsilon)
-    y_soft = softmax(y / tau, dims=2)
+function sample_gumbel_softmax(; probs = nothing, logits = nothing, tau = 0.1, hard = true, epsilon = 1e-10)
+    if logits === nothing
+        logits = log.(probs .+ epsilon)
+    end
+    y = logits + sample_gumbel(probs, size(logits), epsilon = epsilon)
+    y_soft = softmax(y / tau, dims = 2)
     if hard
-        y_hard = (y_soft .== maximum(y_soft, dims=2))
+        y_hard = (y_soft .== maximum(y_soft, dims = 2))
         ret = y_hard - stop_gradient(y_soft) + y_soft
     else
         ret = y_soft
