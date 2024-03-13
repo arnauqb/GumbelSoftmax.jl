@@ -16,7 +16,7 @@ function sample_conditional_gumbel(logits, D, k=1)
     logits = reshape(logits, 1, size(logits)...)
     Z = reshape(Z, 1, size(Z)...)
     adjusted = D .* (-log.(Ei) .+ log.(Z)) .+ (1 .- D) .* (-log.(E ./ exp.(logits) .+ Ei ./ Z))
-    return adjusted .- logits
+    return (logits .- stop_gradient(logits)) .+ stop_gradient(adjusted)
 end
 
 function sample_rao_gumbel_softmax(; probs=nothing, logits=nothing, k=1, temp=1.0, I=nothing, epsilon=1e-10)
@@ -28,16 +28,10 @@ function sample_rao_gumbel_softmax(; probs=nothing, logits=nothing, k=1, temp=1.
     end
     num_classes = size(logits, 2)
     if I === nothing
-        I = zeros(Int, size(probs, 1))
-        for i in axes(probs, 1)
-            I[i] = rand(Categorical(probs[i, :]))
-        end
+        I = [rand(Categorical(probs[i,:])) for i in axes(probs, 1)]
     end
     D = hcat(onehot.(I, Ref(1:num_classes))...)'
-    adjusted = logits .+ sample_conditional_gumbel(logits, D, k)
-    println(size(adjusted))
-    surrogate = mean(softmax(adjusted ./ temp, dims=2), dims=1)
-    println(surrogate)
-    println(D)
-    return surrogate + stop_gradient(D - surrogate) 
+    adjusted = sample_conditional_gumbel(logits, D, k)
+    surrogate = mean(softmax(adjusted ./ temp, dims=3), dims=1)
+    return ((surrogate - stop_gradient(surrogate)) +  stop_gradient(reshape(D, 1, size(D)...)))[1, :, :]
 end
