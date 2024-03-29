@@ -3,8 +3,6 @@
 
 export sample_rao_gumbel_softmax
 
-using Infiltrator
-
 function sample_conditional_gumbel(logits, D, k=1)
     # E should be size (k, n_samples, n_classes)
     E = rand(Exponential(1), k, size(logits)...)
@@ -19,7 +17,7 @@ function sample_conditional_gumbel(logits, D, k=1)
     return (logits .- stop_gradient(logits)) .+ stop_gradient(adjusted)
 end
 
-function sample_rao_gumbel_softmax(; probs=nothing, logits=nothing, k=1, temp=1.0, I=nothing, epsilon=1e-10)
+function sample_rao_gumbel_softmax(; probs=nothing, logits=nothing, k=1, tau=1.0, I=nothing, epsilon=1e-10)
     if logits === nothing
         logits = log.(probs .+ epsilon)
     end
@@ -28,10 +26,11 @@ function sample_rao_gumbel_softmax(; probs=nothing, logits=nothing, k=1, temp=1.
     end
     num_classes = size(logits, 2)
     if I === nothing
-        I = [rand(Categorical(probs[i,:])) for i in axes(probs, 1)]
+        # note: calling value here beacuse it can interfere with StochasticAD.jl derivative of the Categorical.
+        I = [rand(Categorical(ForwardDiff.value.(probs[i,:]))) for i in axes(probs, 1)]
     end
     D = hcat(onehot.(I, Ref(1:num_classes))...)'
     adjusted = sample_conditional_gumbel(logits, D, k)
-    surrogate = mean(softmax(adjusted ./ temp, dims=3), dims=1)
+    surrogate = mean(softmax(adjusted ./ tau, dims=3), dims=1)
     return ((surrogate - stop_gradient(surrogate)) +  stop_gradient(reshape(D, 1, size(D)...)))[1, :, :]
 end

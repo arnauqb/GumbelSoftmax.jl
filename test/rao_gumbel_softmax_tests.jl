@@ -38,13 +38,13 @@ end
         [-0.1233 -0.1126 0.2359]]
     n_grad_samples = 1000
     logits = [[1.0 1.5 0.8];]
-    grad_samples_zygote = mean([Zygote.jacobian(logits -> sample_rao_gumbel_softmax(logits = logits, k = k, temp = 0.1), logits)[1] for i in 1:n_grad_samples], dims = 1)[1]
-    grad_samples_fd = mean([ForwardDiff.jacobian(logits -> sample_rao_gumbel_softmax(logits = logits, k = k, temp = 0.1), logits) for i in 1:n_grad_samples], dims = 1)[1]
+    grad_samples_zygote = mean([Zygote.jacobian(logits -> sample_rao_gumbel_softmax(logits = logits, k = k, tau = 0.1), logits)[1] for i in 1:n_grad_samples], dims = 1)[1]
+    grad_samples_fd = mean([ForwardDiff.jacobian(logits -> sample_rao_gumbel_softmax(logits = logits, k = k, tau = 0.1), logits) for i in 1:n_grad_samples], dims = 1)[1]
     @test grad_samples_zygote ≈ pytorch_jacobian_truth_1 rtol = 1e-1
     @test grad_samples_fd ≈ pytorch_jacobian_truth_1 rtol = 1e-1
     logits = [[0.3 0.2 0.5];]
-    grad_samples_zygote = mean([Zygote.jacobian(logits -> sample_rao_gumbel_softmax(logits = logits, k = k, temp = 0.1), logits)[1] for i in 1:n_grad_samples], dims = 1)[1]
-    grad_samples_fd = mean([ForwardDiff.jacobian(logits -> sample_rao_gumbel_softmax(logits = logits, k = k, temp = 0.1), logits) for i in 1:n_grad_samples], dims = 1)[1]
+    grad_samples_zygote = mean([Zygote.jacobian(logits -> sample_rao_gumbel_softmax(logits = logits, k = k, tau = 0.1), logits)[1] for i in 1:n_grad_samples], dims = 1)[1]
+    grad_samples_fd = mean([ForwardDiff.jacobian(logits -> sample_rao_gumbel_softmax(logits = logits, k = k, tau = 0.1), logits) for i in 1:n_grad_samples], dims = 1)[1]
     @test grad_samples_zygote ≈ pytorch_jacobian_truth_2 rtol = 1e-1
     @test grad_samples_fd ≈ pytorch_jacobian_truth_2 rtol = 1e-1
 end
