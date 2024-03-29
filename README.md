@@ -29,7 +29,7 @@ logits = randn(4, 3, 10)
 samples = sample_gumbel_softmax(logits=logits, tau=0.1, hard=true)
 # or with Rao-Blackwellization
 k = 10 # number of Monte-Carlo samples
-samples = sample_rao_gumbel_softmax(logits=logits, tau=0.1, k=k, hard=true)
+samples = sample_rao_gumbel_softmax(logits=logits, tau=0.1, k=k)
 ```
 
 # 3. Example: Discrete Variational Autoencoder (VAE)
