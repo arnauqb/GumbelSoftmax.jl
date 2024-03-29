@@ -10,8 +10,8 @@ p = [[0.1, 0.2, 0.3, 0.4] [0.5, 0.6, 0.1, 0.3] [0.4, 0.2, 0.6, 0.3]]
     N = 10000
     function sample_cat(p, N, tau, hard)
         res = zeros(size(p))
-        for i = 1:N
-            res += sample_gumbel_softmax(p, tau, hard = hard)
+        for i ∈ 1:N
+            res += sample_gumbel_softmax(probs=p, tau=tau, hard=hard)
         end
         return res / N
     end
@@ -31,7 +31,7 @@ end
     N = 1000
 
     function get_total(p, N, tau)
-        res = sum([sum(sample_gumbel_softmax(p, tau)[:,2]) for i in 1:N])
+        res = sum([sum(sample_gumbel_softmax(probs=p, tau=tau)[:, 2]) for i in 1:N])
         return res
     end
     tau = 0.1
@@ -40,7 +40,7 @@ end
 
     function get_gradient_estimation(n_gradients, tau)
         gradient_estimation = zeros(size(p))
-        for i = 1:n_gradients
+        for i ∈ 1:n_gradients
             gradient_estimation += gradient(x -> get_total(x, N, tau), p)[1]
         end
         return gradient_estimation / n_gradients
@@ -51,28 +51,28 @@ end
     tau = 0.1
     result_pytorch = [[-513.5213, -596.2949, -100.7937, -300.1013] [498.3330, 400.7059, 913.0403, 699.4238] [-494.5359, -605.8228, -101.7766, -299.2887]]
     gradient_estimation = get_gradient_estimation(n_gradients, tau)
-    @test gradient_estimation ≈ result_pytorch rtol=0.1
+    @test gradient_estimation ≈ result_pytorch rtol = 0.1
 
     tau = 1.0
-    result_pytorch = [[-483.5320, -427.3559, -120.3069, -201.5042] [ 338.8372,  284.9475,  916.4451,  493.3838] [-302.6633, -427.4868,  -92.5874, -224.7113]]
+    result_pytorch = [[-483.5320, -427.3559, -120.3069, -201.5042] [338.8372, 284.9475, 916.4451, 493.3838] [-302.6633, -427.4868, -92.5874, -224.7113]]
     gradient_estimation = get_gradient_estimation(n_gradients, tau)
-    @test gradient_estimation ≈ result_pytorch rtol=0.1
+    @test gradient_estimation ≈ result_pytorch rtol = 0.1
 
     tau = 0.01
-    result_pytorch = [[-500.0630, -568.3240,  -87.3544, -292.3041] [ 505.0536,  401.1935,  859.7476,  702.5405] [-506.3012, -635.2565,  -99.6141, -312.8018]]
+    result_pytorch = [[-500.0630, -568.3240, -87.3544, -292.3041] [505.0536, 401.1935, 859.7476, 702.5405] [-506.3012, -635.2565, -99.6141, -312.8018]]
     gradient_estimation = get_gradient_estimation(n_gradients, tau)
-    @test gradient_estimation ≈ result_pytorch rtol=0.1
+    @test gradient_estimation ≈ result_pytorch rtol = 0.1
 end
 
 @testset "Test ForwardDiff" begin
     function f(p)
         probs = p * ones(10)
         probs = [probs 1 .- probs]
-        return sum(sample_gumbel_softmax(probs, 0.1, hard=true)[:,1])
+        return sum(sample_gumbel_softmax(probs=probs, tau=0.1, hard=true)[:, 1])
     end
     p = 0.3
     n_samples = 1000
     fdiffs = sum([ForwardDiff.derivative(f, p) for i in 1:n_samples]) / n_samples
     zdiffs = sum([Zygote.gradient(f, p)[1] for i in 1:n_samples]) / n_samples
-    @test fdiffs ≈ zdiffs rtol=0.1
+    @test fdiffs ≈ zdiffs rtol = 0.1
 end
