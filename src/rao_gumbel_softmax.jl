@@ -44,13 +44,5 @@ is a small value to avoid numerical instability. The expected shape of `logits` 
 keep it consistent with Flux. `tau` is a temperature parameter that controls the smoothness of the distribution. `k` is the number of Monte Carlo samples.
 """
 function sample_rao_gumbel_softmax(; probs = nothing, logits = nothing, k = 1, tau = 1.0, I = nothing, epsilon = 1e-10)
-	if logits === nothing
-		logits = log.(probs .+ epsilon)
-	end
-	if probs === nothing
-		probs = softmax(logits, dims = 2)
-	end
-	ret = [sample_rao_gumbel_softmax_no_batch(probs = probs[:, :, i], logits = logits[:, :, i], k = k, tau = tau, I = I, epsilon = epsilon) for i in axes(probs, 3)]
-	# concatenate along last dimension
-	return cat(ret..., dims = 3)
+	return sample_rao_gumbel_softmax_no_batch.(probs = probs, logits = logits, k = k, tau = tau, I = I, epsilon = epsilon)
 end
