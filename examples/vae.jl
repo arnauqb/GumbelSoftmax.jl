@@ -1,4 +1,6 @@
 ##
+using Pkg
+Pkg.activate("examples")
 using Distributions, GumbelSoftmax, Flux, MLDatasets, Statistics, ProgressMeter, PyPlot
 
 ##
@@ -33,14 +35,14 @@ function run_model(encoder, decoder, x, latent_dim, categorical_dim)
     q = encoder(x)
     q_unflatten = reshape(q, latent_dim, categorical_dim, :)
     z = sample_gumbel_softmax(logits=q_unflatten, tau=0.5)
-    #z = sample_rao_gumbel_softmax(logits=q_unflatten |> cpu, tau=0.5, k=1) |> device
+    #z = sample_rao_gumbel_softmax(logits=q_unflatten |> cpu, tau=0.5, k=10) |> device
     z = reshape(z, latent_dim * categorical_dim, :)
     return decoder(z), reshape(softmax(q_unflatten, dims=2), latent_dim * categorical_dim, :)
 end
 
 function compute_loss(x, x_reconstructed, latent_z)
     bce = Flux.Losses.binarycrossentropy(x_reconstructed, x, agg=sum) ./ size(x, 2)
-    log_ratio = log.(latent_z .* categorical_dim .+ 1e-10) 
+    log_ratio = log.(latent_z .* categorical_dim .+ 1e-10)
     kld = mean(sum(latent_z .* log_ratio, dims=1))
     return bce + kld
 end
@@ -56,7 +58,7 @@ function train(encoder, decoder, xtrain, nepochs)
                 z_decoded, z_soft = run_model(encoder, decoder, x, latent_dim, categorical_dim)
                 compute_loss(x, z_decoded, z_soft)
             end
-            gradients = back(1f0)
+            gradients = back(1.0f0)
             Flux.Optimise.update!(optim, trainable_params, gradients)
             push!(losses, loss)
         end
@@ -74,6 +76,7 @@ ax.plot(losses)
 ax.set_xlabel("Epoch")
 ax.set_ylabel("Loss")
 fig.savefig("examples/img/losses.png", bbox_inches="tight")
+fig
 ##
 
 # plot reconstruction examples
@@ -119,7 +122,7 @@ for index in 1:n_samples
     if j == 0
         j = 8
     end
-    ax[i, j].imshow(transpose(samples_decoded[:,:,index]), cmap="gray")
+    ax[i, j].imshow(transpose(samples_decoded[:, :, index]), cmap="gray")
     ax[i, j].axis("off")
 end
 fig.savefig("examples/img/generated.png", bbox_inches="tight")

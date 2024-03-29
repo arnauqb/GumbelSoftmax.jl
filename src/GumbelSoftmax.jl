@@ -7,6 +7,7 @@ using Flux
 using ForwardDiff
 using OneHotArrays
 using Random
+using SliceMap
 using Zygote
 
 include("utils.jl")

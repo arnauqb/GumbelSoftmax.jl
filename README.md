@@ -38,7 +38,7 @@ We include an example of using the Gumbel-Softmax trick to implement a discrete 
 The example can be found in `examples/vae.jl` and it can be run with
 
 ```bash
-julia --project=examples examples/vae.jl
+julia examples/vae.jl
 ```
 Here are some results:
 
