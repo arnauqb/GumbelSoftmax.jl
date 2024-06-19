@@ -1,6 +1,5 @@
 using ForwardDiff
 using GumbelSoftmax
-using Flux
 using Test
 using Zygote
 using Statistics

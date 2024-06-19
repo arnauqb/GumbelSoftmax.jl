@@ -3,8 +3,8 @@ module GumbelSoftmax
 using CUDA
 using ChainRulesCore
 using Distributions
-using Flux
 using ForwardDiff
+using NNlib
 using OneHotArrays
 using Random
 using SliceMap
